@@ -63,9 +63,8 @@ public class Solution {
 
     private static void createMazeAndPrint(Dimension dim) {
         Maze m = new Maze(dim);
-
         CrossBitmapMazeView view = new CrossBitmapMazeView(m);
-        printMaze(view);
+        new UnicodeRenderer(view).render(out);
     }
 
     static class Maze {
@@ -349,73 +348,82 @@ public class Solution {
 
     }
 
-    private static void printMaze(CrossBitmapMazeView view) {
-        for (short[] aMaze : view.view) {
-            for (short c : aMaze) {
-                out.print(maskToChar(c));
-            }
-            out.println();
-        }
-    }
+    static class UnicodeRenderer {
 
-    static char maskToChar(short s) {
-        if ((s & U) != 0) {
-            if ((s & D) != 0) {
-                if ((s & L) != 0) {
-                    if ((s & R) != 0) {
-                        return UP_DOWN_LEFT_RIGHT;
-                    } else { // not right
-                        return UP_DOWN_LEFT;
-                    }
-                } else { // not left
-                    if ((s & R) != 0) {
-                        return UP_DOWN_RIGHT;
-                    } else { // not right
-                        return UP_DOWN;
-                    }
+        CrossBitmapMazeView view;
+
+        public UnicodeRenderer(CrossBitmapMazeView view) {
+            this.view = view;
+        }
+
+        public void render(PrintStream out) {
+            for (short[] aMaze : view.view) {
+                for (short c : aMaze) {
+                    out.print(maskToChar(c));
                 }
-            } else { // not down
-                if ((s & L) != 0) {
-                    if ((s & R) != 0) {
-                        return UP_LEFT_RIGHT;
-                    } else { // not right
-                        return UP_LEFT;
-                    }
-                } else { // not left
-                    if ((s & R) != 0) {
-                        return UP_RIGHT;
-                    } else { // not right
-                        return UP;
-                    }
-                }
+                out.println();
             }
-        } else { // not up
-            if ((s & D) != 0) {
-                if ((s & L) != 0) {
-                    if ((s & R) != 0) {
-                        return DOWN_LEFT_RIGHT;
-                    } else { // not right
-                        return DOWN_LEFT;
+        }
+
+        protected char maskToChar(short s) {
+            if ((s & U) != 0) {
+                if ((s & D) != 0) {
+                    if ((s & L) != 0) {
+                        if ((s & R) != 0) {
+                            return UP_DOWN_LEFT_RIGHT;
+                        } else { // not right
+                            return UP_DOWN_LEFT;
+                        }
+                    } else { // not left
+                        if ((s & R) != 0) {
+                            return UP_DOWN_RIGHT;
+                        } else { // not right
+                            return UP_DOWN;
+                        }
                     }
-                } else { // not left
-                    if ((s & R) != 0) {
-                        return DOWN_RIGHT;
-                    } else { // not right
-                        return DOWN;
+                } else { // not down
+                    if ((s & L) != 0) {
+                        if ((s & R) != 0) {
+                            return UP_LEFT_RIGHT;
+                        } else { // not right
+                            return UP_LEFT;
+                        }
+                    } else { // not left
+                        if ((s & R) != 0) {
+                            return UP_RIGHT;
+                        } else { // not right
+                            return UP;
+                        }
                     }
                 }
-            } else { // not down
-                if ((s & L) != 0) {
-                    if ((s & R) != 0) {
-                        return LEFT_RIGHT;
-                    } else { // not right
-                        return LEFT;
+            } else { // not up
+                if ((s & D) != 0) {
+                    if ((s & L) != 0) {
+                        if ((s & R) != 0) {
+                            return DOWN_LEFT_RIGHT;
+                        } else { // not right
+                            return DOWN_LEFT;
+                        }
+                    } else { // not left
+                        if ((s & R) != 0) {
+                            return DOWN_RIGHT;
+                        } else { // not right
+                            return DOWN;
+                        }
                     }
-                } else { // not left
-                    if ((s & R) != 0) {
-                        return RIGHT;
-                    } else { // not right
-                        return ' '; // ("" + s).charAt(s < 10 ? 0 : 1);
+                } else { // not down
+                    if ((s & L) != 0) {
+                        if ((s & R) != 0) {
+                            return LEFT_RIGHT;
+                        } else { // not right
+                            return LEFT;
+                        }
+                    } else { // not left
+                        if ((s & R) != 0) {
+                            return RIGHT;
+                        } else { // not right
+                            return ' '; // ("" + s).charAt(s < 10 ? 0 : 1);
+                        }
                     }
                 }
             }
