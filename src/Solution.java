@@ -293,6 +293,7 @@ public class Solution {
             Wall wall = (Wall) o;
 
             if (a != null ? !a.equals(wall.a) : wall.a != null) return false;
+            //noinspection RedundantIfStatement
             if (b != null ? !b.equals(wall.b) : wall.b != null) return false;
 
             return true;
@@ -334,6 +335,7 @@ public class Solution {
             Cell cell = (Cell) o;
 
             if (x != cell.x) return false;
+            //noinspection RedundantIfStatement
             if (y != cell.y) return false;
 
             return true;
