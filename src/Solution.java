@@ -12,15 +12,12 @@ import java.util.Stack;
 
 public class Solution {
 
-    static PrintStream out;
-
     static final short U = 1;
     static final short D = 2;
     static final short L = 4;
     static final short R = 8;
 
     public static void main(String args[]) throws Exception {
-        out = new PrintStream(System.out, true, "UTF-8");
         if (args.length >= 2) {
             for (int i = 0; i < args.length; i += 2) {
                 createMazeAndPrint(args[i], args[i + 1]);
@@ -40,15 +37,15 @@ public class Solution {
         }
     }
 
-    private static void createMazeAndPrint(String width, String height) {
+    private static void createMazeAndPrint(String width, String height) throws Exception {
         Dimension dim = new Dimension(Integer.parseInt(width), Integer.parseInt(height));
         createMazeAndPrint(dim);
     }
 
-    private static void createMazeAndPrint(Dimension dim) {
+    private static void createMazeAndPrint(Dimension dim) throws Exception {
         Maze m = new Maze(dim);
         CrossBitmapMazeView view = new CrossBitmapMazeView(m);
-        new UnicodeRenderer(view).render(out);
+        new UnicodeRenderer(view).render(new PrintStream(System.out, true, "UTF-8"));
     }
 
     static class Maze {
