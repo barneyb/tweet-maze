@@ -64,11 +64,8 @@ public class Solution {
     private static void createMazeAndPrint(Dimension dim) {
         Maze m = new Maze(dim);
 
-        short[][] maze = new short[dim.height + 1][dim.width + 1];
-        drawBorder(dim, maze);
-        drawCellBounds(m, maze);
-        openDoors(m, maze);
-        printMaze(maze);
+        CrossBitmapMazeView view = new CrossBitmapMazeView(m);
+        printMaze(view);
     }
 
     static class Maze {
@@ -280,68 +277,84 @@ public class Solution {
 
     }
 
-    private static void printMaze(short[][] maze) {
-        for (short[] aMaze : maze) {
+    static class CrossBitmapMazeView {
+
+        final Maze maze;
+        final short[][] view;
+
+        public CrossBitmapMazeView(Maze maze) {
+            this.maze = maze;
+            view = new short[maze.dim.height + 1][maze.dim.width + 1];
+            drawBorder();
+            drawCellBounds();
+            openDoors();
+        }
+
+        private void drawBorder() {
+            Dimension dim = maze.dim;
+            for (int i = 0; i <= dim.width; i++) {
+                for (int j = 0; j <= dim.height; j++) {
+                    if (i == 0) {
+                        if (j == 0) {
+                            view[j][i] = D | R;
+                        } else if (j == dim.height) {
+                            view[j][i] = U | R;
+                        } else {
+                            view[j][i] = U | D;
+                        }
+                    } else if (i == dim.width) {
+                        if (j == 0) {
+                            view[j][i] = D | L;
+                        } else if (j == dim.height) {
+                            view[j][i] = U | L;
+                        } else {
+                            view[j][i] = U | D;
+                        }
+                    } else if (j == 0 || j == dim.height) {
+                        view[j][i] = L | R;
+                    }
+                }
+            }
+        }
+
+        private void drawCellBounds() {
+            for (Maze.Cell[] cs : maze.cells) {
+                for (Maze.Cell c : cs) {
+                    if (c.isWallUp()) {
+                        view[c.y][c.x] |= R;
+                        view[c.y][c.x + 1] |= L;
+                    }
+                    if (c.isWallDown()) {
+                        view[c.y + 1][c.x] |= R;
+                        view[c.y + 1][c.x + 1] |= L;
+                    }
+                    if (c.isWallLeft()) {
+                        view[c.y][c.x] |= D;
+                        view[c.y + 1][c.x] |= U;
+                    }
+                    if (c.isWallRight()) {
+                        view[c.y][c.x + 1] |= D;
+                        view[c.y + 1][c.x + 1] |= U;
+                    }
+                }
+            }
+        }
+
+        private void openDoors() {
+            view[maze.entry.y][0] &= ~D;
+            view[maze.entry.y + 1][0] &= ~U;
+            view[maze.dim.height - 1][maze.dim.width] &= ~D;
+            view[maze.dim.height][maze.dim.width] &= ~U;
+        }
+
+    }
+
+    private static void printMaze(CrossBitmapMazeView view) {
+        for (short[] aMaze : view.view) {
             for (short c : aMaze) {
                 out.print(maskToChar(c));
             }
             out.println();
-        }
-    }
-
-    private static void openDoors(Maze m, short[][] maze) {
-        maze[m.entry.y][0] &= ~D;
-        maze[m.entry.y + 1][0] &= ~U;
-        maze[m.dim.height - 1][m.dim.width] &= ~D;
-        maze[m.dim.height][m.dim.width] &= ~U;
-    }
-
-    private static void drawCellBounds(Maze m, short[][] maze) {
-        for (Maze.Cell[] cs : m.cells) {
-            for (Maze.Cell c : cs) {
-                if (c.isWallUp()) {
-                    maze[c.y][c.x] |= R;
-                    maze[c.y][c.x + 1] |= L;
-                }
-                if (c.isWallDown()) {
-                    maze[c.y + 1][c.x] |= R;
-                    maze[c.y + 1][c.x + 1] |= L;
-                }
-                if (c.isWallLeft()) {
-                    maze[c.y][c.x] |= D;
-                    maze[c.y + 1][c.x] |= U;
-                }
-                if (c.isWallRight()) {
-                    maze[c.y][c.x + 1] |= D;
-                    maze[c.y + 1][c.x + 1] |= U;
-                }
-            }
-        }
-    }
-
-    private static void drawBorder(Dimension dim, short[][] maze) {
-        for (int i = 0; i <= dim.width; i++) {
-            for (int j = 0; j <= dim.height; j++) {
-                if (i == 0) {
-                    if (j == 0) {
-                        maze[j][i] = D | R;
-                    } else if (j == dim.height) {
-                        maze[j][i] = U | R;
-                    } else {
-                        maze[j][i] = U | D;
-                    }
-                } else if (i == dim.width) {
-                    if (j == 0) {
-                        maze[j][i] = D | L;
-                    } else if (j == dim.height) {
-                        maze[j][i] = U | L;
-                    } else {
-                        maze[j][i] = U | D;
-                    }
-                } else if (j == 0 || j == dim.height) {
-                    maze[j][i] = L | R;
-                }
-            }
         }
     }
 
