@@ -69,4 +69,4 @@ numbers, hit Enter, a maze will be drawn, and then repeat:
     ┗━━━┻━╸
 
 Just hit Enter on a blank line to exit.  Or you can use CTRL-D or CTRL-C if
-you're feeling especially agressive.
+you're feeling especially aggressive.
