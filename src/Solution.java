@@ -39,7 +39,7 @@ public class Solution {
         out = new PrintStream(System.out, true, "UTF-8");
         if (args.length >= 2) {
             for (int i = 0; i < args.length; i += 2) {
-                printMaze(args[i], args[i + 1]);
+                createMazeAndPrint(args[i], args[i + 1]);
             }
             return;
         }
@@ -52,24 +52,22 @@ public class Solution {
                 break;
             }
             String[] dims = line.split(" ");
-            printMaze(dims[0], dims[1]);
+            createMazeAndPrint(dims[0], dims[1]);
         }
     }
 
-    private static void printMaze(String width, String height) {
+    private static void createMazeAndPrint(String width, String height) {
         Dimension dim = new Dimension(Integer.parseInt(width), Integer.parseInt(height));
-        printMaze(dim);
+        createMazeAndPrint(dim);
     }
 
-    private static void printMaze(Dimension dim) {
+    private static void createMazeAndPrint(Dimension dim) {
         Maze m = new Maze(dim);
-        Cell[][] cells = m.cells;
-        Cell entry = m.entry;
 
         short[][] maze = new short[dim.height + 1][dim.width + 1];
         drawBorder(dim, maze);
-        drawCellBounds(cells, maze);
-        openDoors(dim, entry, maze);
+        drawCellBounds(m, maze);
+        openDoors(m, maze);
         printMaze(maze);
     }
 
@@ -110,6 +108,18 @@ public class Solution {
             }
         }
 
+        private Set<Wall> _walls = new HashSet<Wall>();
+        private Wall intern(Wall wall) {
+            if (! _walls.add(wall)) {
+                for (Wall w : _walls) {
+                    if (w == wall) {
+                        return w;
+                    }
+                }
+            }
+            return wall;
+        }
+
         private void constructMaze() {
             Stack<Cell> stack = new Stack<Cell>();
             stack.push(cells[dim.width - 1][dim.height - 1]);
@@ -137,6 +147,137 @@ public class Solution {
             }
         }
 
+        class Wall {
+            Cell a;
+            Cell b;
+
+            Wall(Cell a, Cell b) {
+                this.a = a;
+                this.b = b;
+            }
+
+            Cell other(Cell one) {
+                return a == one ? b : a;
+            }
+
+            void destroy() {
+                a.walls.remove(this);
+                b.walls.remove(this);
+                _walls.remove(this);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof Wall)) return false;
+
+                Wall wall = (Wall) o;
+
+                if (a != null ? !a.equals(wall.a) : wall.a != null) return false;
+                //noinspection RedundantIfStatement
+                if (b != null ? !b.equals(wall.b) : wall.b != null) return false;
+
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                int result = a != null ? a.hashCode() : 0;
+                result = 31 * result + (b != null ? b.hashCode() : 0);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "Wall{" +
+                    "a=" + a +
+                    ", b=" + b +
+                    '}';
+            }
+        }
+
+        class Cell {
+            int x;
+            int y;
+            boolean visited = false;
+
+            Collection<Wall> walls = new ArrayList<Wall>();
+
+            Cell(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof Cell)) return false;
+
+                Cell cell = (Cell) o;
+
+                if (x != cell.x) return false;
+                //noinspection RedundantIfStatement
+                if (y != cell.y) return false;
+
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                int result = x;
+                result = 31 * result + y;
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "Cell{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
+            }
+
+            public boolean isWallUp() {
+                for (Wall w : walls) {
+                    Cell o = w.other(this);
+                    if (o.x == x && o.y == y - 1) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public boolean isWallDown() {
+                for (Wall w : walls) {
+                    Cell o = w.other(this);
+                    if (o.x == x && o.y == y + 1) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public boolean isWallLeft() {
+                for (Wall w : walls) {
+                    Cell o = w.other(this);
+                    if (o.x == x - 1 && o.y == y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public boolean isWallRight() {
+                for (Wall w : walls) {
+                    Cell o = w.other(this);
+                    if (o.x == x + 1 && o.y == y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
     }
 
     private static void printMaze(short[][] maze) {
@@ -148,16 +289,16 @@ public class Solution {
         }
     }
 
-    private static void openDoors(Dimension dim, Cell entry, short[][] maze) {
-        maze[entry.y][0] &= ~D;
-        maze[entry.y + 1][0] &= ~U;
-        maze[dim.height - 1][dim.width] &= ~D;
-        maze[dim.height][dim.width] &= ~U;
+    private static void openDoors(Maze m, short[][] maze) {
+        maze[m.entry.y][0] &= ~D;
+        maze[m.entry.y + 1][0] &= ~U;
+        maze[m.dim.height - 1][m.dim.width] &= ~D;
+        maze[m.dim.height][m.dim.width] &= ~U;
     }
 
-    private static void drawCellBounds(Cell[][] cells, short[][] maze) {
-        for (Cell[] cs : cells) {
-            for (Cell c : cs) {
+    private static void drawCellBounds(Maze m, short[][] maze) {
+        for (Maze.Cell[] cs : m.cells) {
+            for (Maze.Cell c : cs) {
                 if (c.isWallUp()) {
                     maze[c.y][c.x] |= R;
                     maze[c.y][c.x + 1] |= L;
@@ -265,149 +406,6 @@ public class Solution {
                     }
                 }
             }
-        }
-    }
-
-    static Set<Wall> _walls = new HashSet<Wall>();
-    static Wall intern(Wall wall) {
-        if (! _walls.add(wall)) {
-            for (Wall w : _walls) {
-                if (w == wall) {
-                    return w;
-                }
-            }
-        }
-        return wall;
-    }
-
-    static class Wall {
-        Cell a;
-        Cell b;
-
-        Wall(Cell a, Cell b) {
-            this.a = a;
-            this.b = b;
-        }
-
-        Cell other(Cell one) {
-            return a == one ? b : a;
-        }
-
-        void destroy() {
-            a.walls.remove(this);
-            b.walls.remove(this);
-            _walls.remove(this);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Wall)) return false;
-
-            Wall wall = (Wall) o;
-
-            if (a != null ? !a.equals(wall.a) : wall.a != null) return false;
-            //noinspection RedundantIfStatement
-            if (b != null ? !b.equals(wall.b) : wall.b != null) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = a != null ? a.hashCode() : 0;
-            result = 31 * result + (b != null ? b.hashCode() : 0);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "Wall{" +
-                "a=" + a +
-                ", b=" + b +
-                '}';
-        }
-    }
-
-    static class Cell {
-        int x;
-        int y;
-        boolean visited = false;
-
-        Collection<Wall> walls = new ArrayList<Wall>();
-
-        Cell(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Cell)) return false;
-
-            Cell cell = (Cell) o;
-
-            if (x != cell.x) return false;
-            //noinspection RedundantIfStatement
-            if (y != cell.y) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = x;
-            result = 31 * result + y;
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "Cell{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
-        }
-
-        public boolean isWallUp() {
-            for (Wall w : walls) {
-                Cell o = w.other(this);
-                if (o.x == x && o.y == y - 1) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public boolean isWallDown() {
-            for (Wall w : walls) {
-                Cell o = w.other(this);
-                if (o.x == x && o.y == y + 1) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public boolean isWallLeft() {
-            for (Wall w : walls) {
-                Cell o = w.other(this);
-                if (o.x == x - 1 && o.y == y) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public boolean isWallRight() {
-            for (Wall w : walls) {
-                Cell o = w.other(this);
-                if (o.x == x + 1 && o.y == y) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
