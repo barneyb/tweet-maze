@@ -18,9 +18,10 @@ public class Solution {
     static final short R = 8;
 
     public static void main(String args[]) throws Exception {
+        Solution s = new Solution();
         if (args.length >= 2) {
             for (int i = 0; i < args.length; i += 2) {
-                createMazeAndPrint(args[i], args[i + 1]);
+                s.createMazeAndPrint(args[i], args[i + 1]);
             }
             return;
         }
@@ -33,22 +34,22 @@ public class Solution {
                 break;
             }
             String[] dims = line.split(" ");
-            createMazeAndPrint(dims[0], dims[1]);
+            s.createMazeAndPrint(dims[0], dims[1]);
         }
     }
 
-    private static void createMazeAndPrint(String width, String height) throws Exception {
+    private void createMazeAndPrint(String width, String height) throws Exception {
         Dimension dim = new Dimension(Integer.parseInt(width), Integer.parseInt(height));
         createMazeAndPrint(dim);
     }
 
-    private static void createMazeAndPrint(Dimension dim) throws Exception {
+    private void createMazeAndPrint(Dimension dim) throws Exception {
         Maze m = new Maze(dim);
         CrossBitmapMazeView view = new CrossBitmapMazeView(m);
         new UnicodeRenderer(view).render(new PrintStream(System.out, true, "UTF-8"));
     }
 
-    static class Maze {
+    class Maze {
         final Dimension dim;
         Cell[][] cells;
         Cell entry;
@@ -257,7 +258,7 @@ public class Solution {
 
     }
 
-    static class CrossBitmapMazeView {
+    class CrossBitmapMazeView {
 
         final Maze maze;
         final short[][] view;
@@ -329,7 +330,7 @@ public class Solution {
 
     }
 
-    static class UnicodeRenderer {
+    class UnicodeRenderer {
 
         static final char LEFT_RIGHT = '\u2501';
         static final char UP_DOWN = '\u2503';
