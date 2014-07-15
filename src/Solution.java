@@ -37,8 +37,11 @@ public class Solution {
 
     public static void main(String args[]) throws Exception {
         out = new PrintStream(System.out, true, "UTF-8");
-        for (int i = 0; i < args.length; i += 2) {
-            printMaze(args[i], args[i + 1]);
+        if (args.length >= 2) {
+            for (int i = 0; i < args.length; i += 2) {
+                printMaze(args[i], args[i + 1]);
+            }
+            return;
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
