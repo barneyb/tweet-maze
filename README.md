@@ -2,7 +2,8 @@ Tweet Maze
 ==========
 
 A very simple maze generator that renders with Unicode box characters to the
-console.  First, you must compile the generator:
+console, and are thus tweetable (if they're small enough: 12x9 max).  First, you
+must compile the generator:
 
     javac src/Solution.java
     
