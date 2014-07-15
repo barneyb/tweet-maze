@@ -19,22 +19,6 @@ public class Solution {
     static final short L = 4;
     static final short R = 8;
 
-    static final char LEFT_RIGHT = '\u2501';
-    static final char UP_DOWN = '\u2503';
-    static final char DOWN_RIGHT = '\u250F';
-    static final char DOWN_LEFT = '\u2513';
-    static final char UP_RIGHT = '\u2517';
-    static final char UP_LEFT = '\u251B';
-    static final char UP_DOWN_RIGHT = '\u2523';
-    static final char UP_DOWN_LEFT = '\u252B';
-    static final char DOWN_LEFT_RIGHT = '\u2533';
-    static final char UP_LEFT_RIGHT = '\u253B';
-    static final char UP_DOWN_LEFT_RIGHT = '\u254B';
-    static final char LEFT = '\u2578';
-    static final char UP = '\u2579';
-    static final char RIGHT = '\u257A';
-    static final char DOWN = '\u257B';
-
     public static void main(String args[]) throws Exception {
         out = new PrintStream(System.out, true, "UTF-8");
         if (args.length >= 2) {
@@ -349,6 +333,22 @@ public class Solution {
     }
 
     static class UnicodeRenderer {
+
+        static final char LEFT_RIGHT = '\u2501';
+        static final char UP_DOWN = '\u2503';
+        static final char DOWN_RIGHT = '\u250F';
+        static final char DOWN_LEFT = '\u2513';
+        static final char UP_RIGHT = '\u2517';
+        static final char UP_LEFT = '\u251B';
+        static final char UP_DOWN_RIGHT = '\u2523';
+        static final char UP_DOWN_LEFT = '\u252B';
+        static final char DOWN_LEFT_RIGHT = '\u2533';
+        static final char UP_LEFT_RIGHT = '\u253B';
+        static final char UP_DOWN_LEFT_RIGHT = '\u254B';
+        static final char LEFT = '\u2578';
+        static final char UP = '\u2579';
+        static final char RIGHT = '\u257A';
+        static final char DOWN = '\u257B';
 
         CrossBitmapMazeView view;
 
