@@ -70,3 +70,25 @@ numbers, hit Enter, a maze will be drawn, and then repeat:
 
 Just hit Enter on a blank line to exit.  Or you can use CTRL-D or CTRL-C if
 you're feeling especially aggressive.
+
+Implementation Notes
+--------------------
+
+The implementation uses a very simple depth-first walk of the maze grid to build
+a fully-connected maze that covers the entire grid. Every maze has it's starting
+gate somewhere on the left side (it varies per maze), and has the exit in the
+lower-right corner.
+
+The generation algorithm is super simple, so the mazes are a) simple, and b) not
+very interesting to look at.
+
+The implementation is in three parts:
+
+1. a generator which creates an abstract maze structure in terms of cells and
+walls between them.
+1. a intersection view, which will take a generated maze and allow it to be
+viewed from the perspective of the wall intersections, instead of cells and walls.
+1. a Unicode renderer that converts the intersection view into the relevant
+Unicode characters and sends them (with the addition of newlines) to an
+OutputStream.
+
