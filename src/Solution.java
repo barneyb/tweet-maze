@@ -37,7 +37,6 @@ public class Solution {
 
     public static void main(String args[]) throws Exception {
         out = new PrintStream(System.out, true, "UTF-8");
-        // parse input, either from args or STDIN
         for (int i = 0; i < args.length; i += 2) {
             printMaze(args[i], args[i + 1]);
         }
@@ -71,19 +70,11 @@ public class Solution {
     }
 
     private static void printMaze(short[][] maze) {
-        //        for (short[] aMaze : maze) {
-//            for (short c : aMaze) {
-//                out.print((c < 10 ? "  " : " ") + c);
-//            }
-//            out.println();
-//        }
         for (short[] aMaze : maze) {
             for (short c : aMaze) {
                 out.print(maskToChar(c));
-//                out.print(' ');
             }
             out.println();
-//            out.println();
         }
     }
 
