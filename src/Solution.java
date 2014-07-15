@@ -62,14 +62,81 @@ public class Solution {
     }
 
     private static void printMaze(Dimension dim) {
-        Cell[][] cells = getCells(dim);
-        Cell entry = constructMaze(dim, cells);
+        Maze m = new Maze(dim);
+        Cell[][] cells = m.cells;
+        Cell entry = m.entry;
 
         short[][] maze = new short[dim.height + 1][dim.width + 1];
         drawBorder(dim, maze);
         drawCellBounds(cells, maze);
         openDoors(dim, entry, maze);
         printMaze(maze);
+    }
+
+    static class Maze {
+        final Dimension dim;
+        Cell[][] cells;
+        Cell entry;
+
+        Maze(Dimension dim) {
+            this.dim = dim;
+            initializeCells();
+            constructMaze();
+        }
+
+        private void initializeCells() {
+            // build grid
+            cells = new Cell[dim.width][dim.height];
+            for (int i = 0; i < dim.width; i++) {
+                for (int j = 0; j < dim.height; j++) {
+                    cells[i][j] = new Cell(i, j);
+                }
+            }
+            for (int i = 0; i < dim.width; i++) {
+                for (int j = 0; j < dim.height; j++) {
+                    if (i > 0) {
+                        cells[i][j].walls.add(intern(new Wall(cells[i - 1][j], cells[i][j])));
+                    }
+                    if (j > 0) {
+                        cells[i][j].walls.add(intern(new Wall(cells[i][j - 1], cells[i][j])));
+                    }
+                    if (i < dim.width - 1) {
+                        cells[i][j].walls.add(intern(new Wall(cells[i][j], cells[i + 1][j])));
+                    }
+                    if (j < dim.height - 1) {
+                        cells[i][j].walls.add(intern(new Wall(cells[i][j], cells[i][j + 1])));
+                    }
+                }
+            }
+        }
+
+        private void constructMaze() {
+            Stack<Cell> stack = new Stack<Cell>();
+            stack.push(cells[dim.width - 1][dim.height - 1]);
+            SecureRandom r = new SecureRandom();
+            while (! stack.empty()) {
+                Cell c = stack.peek();
+                if (c.x == 0) {
+                    entry = c; // this is a potential entry cell, but might be overridden if another one is found later.
+                }
+                c.visited = true;
+                List<Wall> ws = new ArrayList<Wall>();
+                for (Wall w : c.walls) {
+                    if (! w.other(c).visited) {
+                        ws.add(w);
+                    }
+                }
+                if (ws.size() == 0) {
+                    // this cell is a dead end, so pop
+                    stack.pop();
+                } else {
+                    Wall w = ws.get(r.nextInt(ws.size()));
+                    w.destroy();
+                    stack.push(w.other(c));
+                }
+            }
+        }
+
     }
 
     private static void printMaze(short[][] maze) {
@@ -135,62 +202,6 @@ public class Solution {
                 }
             }
         }
-    }
-
-    private static Cell constructMaze(Dimension dim, Cell[][] cells) {
-        Stack<Cell> stack = new Stack<Cell>();
-        stack.push(cells[dim.width - 1][dim.height - 1]);
-        SecureRandom r = new SecureRandom();
-        Cell entry = null;
-        while (! stack.empty()) {
-            Cell c = stack.peek();
-            if (c.x == 0) {
-                entry = c; // this is a potential entry cell, but might be overridden if another one is found later.
-            }
-            c.visited = true;
-            List<Wall> ws = new ArrayList<Wall>();
-            for (Wall w : c.walls) {
-                if (! w.other(c).visited) {
-                    ws.add(w);
-                }
-            }
-            if (ws.size() == 0) {
-                // this cell is a dead end, so pop
-                stack.pop();
-            } else {
-                Wall w = ws.get(r.nextInt(ws.size()));
-                w.destroy();
-                stack.push(w.other(c));
-            }
-        }
-        return entry;
-    }
-
-    private static Cell[][] getCells(Dimension dim) {
-        // build grid
-        Cell[][] cells = new Cell[dim.width][dim.height];
-        for (int i = 0; i < dim.width; i++) {
-            for (int j = 0; j < dim.height; j++) {
-                cells[i][j] = new Cell(i, j);
-            }
-        }
-        for (int i = 0; i < dim.width; i++) {
-            for (int j = 0; j < dim.height; j++) {
-                if (i > 0) {
-                    cells[i][j].walls.add(intern(new Wall(cells[i - 1][j], cells[i][j])));
-                }
-                if (j > 0) {
-                    cells[i][j].walls.add(intern(new Wall(cells[i][j - 1], cells[i][j])));
-                }
-                if (i < dim.width - 1) {
-                    cells[i][j].walls.add(intern(new Wall(cells[i][j], cells[i + 1][j])));
-                }
-                if (j < dim.height - 1) {
-                    cells[i][j].walls.add(intern(new Wall(cells[i][j], cells[i][j + 1])));
-                }
-            }
-        }
-        return cells;
     }
 
     static char maskToChar(short s) {
