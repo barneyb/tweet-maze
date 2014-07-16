@@ -52,21 +52,21 @@ You can also omit any dimensions at all to use interactive mode.  Enter two
 numbers, hit Enter, a maze will be drawn, and then repeat:
 
     $ java -cp src Solution
-![5 5
-╺━━━━┓
-╻╺━━┓┃
-┣━┳╸┃┃
-┃╻╹┏┫┃
-┃┗━┛┃╹
-┗━━━┻╸
-6 6
-┏━┳━━━┓
-╹╺┛┏━┓┃
-╻╺┳┛╻╹┃
-┣┓┃┏┻━┫
-┃╹┃╹┏╸┃
-┃╺┻━┫╺┛
-┗━━━┻━╸](docs/maze_repl.png)
+	5 5
+![┏━━━┳┓
+┃╺┳╸╹┃
+┣╸┣━━┫
+╹╺┫╺┓┃
+╻╻┗╸┃╹
+┗┻━━┻╸](docs/maze_5_5.png)
+	8 5
+![┏━┳━━━┳━┓
+┃┏┛╻╺┓┗╸┃
+┃┃╺╋┓┗┳╸┃
+┃┣╸┃┗┓┃╺┫
+╹╹╺┛╻┃┗━┛
+╺━━━┻┻━━╸](docs/maze_8_5.png)
+	^D
 
 Just hit Enter on a blank line to exit.  Or you can use CTRL-D or CTRL-C if
 you're feeling especially aggressive.
