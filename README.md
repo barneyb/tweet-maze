@@ -59,6 +59,7 @@ numbers, hit Enter, a maze will be drawn, and then repeat:
 ╹╺┫╺┓┃
 ╻╻┗╸┃╹
 ┗┻━━┻╸](docs/maze_5_5.png)
+
 	8 5
 ![┏━┳━━━┳━┓
 ┃┏┛╻╺┓┗╸┃
@@ -66,6 +67,7 @@ numbers, hit Enter, a maze will be drawn, and then repeat:
 ┃┣╸┃┗┓┃╺┫
 ╹╹╺┛╻┃┗━┛
 ╺━━━┻┻━━╸](docs/maze_8_5.png)
+	
 	^D
 
 Just hit Enter on a blank line to exit.  Or you can use CTRL-D or CTRL-C if
